@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">Living English</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_update">Update</string>
+    <string name="title_activity_main">Living English</string>
+    <string name="menu_share">Share...</string>
+    <string name="text_share_subject">Living English</string>
+    <string name="text_share_body">Living English from https://play.google.com/store/apps/details?id=</string>
+
+</resources>
