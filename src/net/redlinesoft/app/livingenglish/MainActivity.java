@@ -72,7 +72,13 @@ public class MainActivity extends Activity {
 	//private AdView adView;
 
 	String url = "http://query.yahooapis.com/v1/public/yql?q=select%20title%2Clink%20from%20feed%20where%20url%3D%22https%3A%2F%2Fgdata.youtube.com%2Ffeeds%2Fapi%2Fplaylists%2FSP0A00C7530C185317%3Fv%3D2%26max-results%3D50%22%20and%20link.rel%3D%22alternate%22&format=json&callback=";
-
+	 
+	ProgressDialog progress;
+	int data_size=0;
+	
+	public ArrayList<HashMap<String, String>> MyArrList = new ArrayList<HashMap<String, String>>();
+	public HashMap<String, String> map;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,34 +90,62 @@ public class MainActivity extends Activity {
 					.permitAll().build();
 			StrictMode.setThreadPolicy(policy);
 		}
+		 
+		progress = ProgressDialog.show(this, null,null,true);
+		
+		// TODO this is fucking thread 
+		 
+		// load thread
+		new Thread(new Runnable() {			
+			@Override
+			public void run() {
+				// load content				
+				loadContent();
+				progress.dismiss();
+			} 
+		}).start();
+		 
+		ListView listItem = (ListView) findViewById(R.id.listItem);
+		while (data_size<=0) {			
+			LazyAdapter adapter = new LazyAdapter(this, MyArrList);
+			listItem.setAdapter(adapter);		  
+		}
+		
+		// OnClick Item
+		listItem.setOnItemClickListener(new OnItemClickListener() {
 
-		ProgressDialog progress = ProgressDialog.show(this, null, "loading...",
-				false);
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub 
+				Intent fanPageIntent = new Intent(Intent.ACTION_VIEW);
+				fanPageIntent.setType("text/url");
+				fanPageIntent.setData(Uri.parse(MyArrList.get(arg2).get("link")));
+				startActivity(fanPageIntent);
+			}
+		});
+		
+		
+		
+		
 
+	}
+	
+	
+	public void loadContent() {
+		
 		// get xml data form yql
 		if (checkNetworkStatus()) {
-
-			// Create the adView
-			//adView = new AdView(this, AdSize.SMART_BANNER, "a15082bc5732b54");
-			// Lookup your LinearLayout assuming it’s been given
-			// the attribute android:id="@+id/mainLayout"
-			//LinearLayout layout = (LinearLayout) findViewById(R.id.mainLayout);
-			// Add the adView to it
-			//layout.addView(adView);
-			// Initiate a generic request to load it with an ad
-			//adView.loadAd(new AdRequest());
-
+ 
 			// load json data
 			try {
 				JSONObject json_data = new JSONObject(getJSONUrl(url));
 				JSONObject json_query = json_data.getJSONObject("query");
 				JSONObject json_result = json_query.getJSONObject("results");
 				JSONArray json_entry = json_result.getJSONArray("entry");
-				Log.d("JSON", String.valueOf(json_entry.length()));
+				Log.d("JSON", String.valueOf(json_entry.length())); 
 
-				final ArrayList<HashMap<String, String>> MyArrList = new ArrayList<HashMap<String, String>>();
-				HashMap<String, String> map;
-
+				
 				for (int i = 0; i < json_entry.length(); i++) {
 
 					// parse json
@@ -133,44 +167,23 @@ public class MainActivity extends Activity {
 					map.put("title", title_fragment[1].toString().trim());
 					map.put("link", c.getJSONObject("link").getString("href"));
 					map.put("videoid", videoid[1]);
-					MyArrList.add(map);
-
+					MyArrList.add(map); 
 				}
-
-				ListView listItem = (ListView) findViewById(R.id.listItem);
-				LazyAdapter adapter = new LazyAdapter(this, MyArrList);
-				listItem.setAdapter(adapter);
-
-				progress.dismiss();
-
-				// OnClick Item
-				listItem.setOnItemClickListener(new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View arg1,
-							int arg2, long arg3) {
-						// TODO Auto-generated method stub 
-						Intent fanPageIntent = new Intent(Intent.ACTION_VIEW);
-						fanPageIntent.setType("text/url");
-						fanPageIntent.setData(Uri.parse(MyArrList.get(arg2).get("link")));
-						startActivity(fanPageIntent);
-					}
-				});
+				
+				data_size = json_entry.length();
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				Toast.makeText(getBaseContext(), "cannot load data !",
-						Toast.LENGTH_SHORT).show();
-				progress.dismiss();
+						Toast.LENGTH_SHORT).show();  
 			}
 
 		} else {
 			Toast.makeText(getBaseContext(), "No network connection!",
 					Toast.LENGTH_SHORT).show();
-			progress.dismiss();
 		}
-
+		
 	}
 
 	public String getJSONUrl(String url) {
