@@ -83,6 +83,8 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		progress = ProgressDialog.show(this,null, "loading...",true);
 
 		// break policy
 		if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -90,9 +92,7 @@ public class MainActivity extends Activity {
 					.permitAll().build();
 			StrictMode.setThreadPolicy(policy);
 		}
-		 
-		progress = ProgressDialog.show(this, null,null,true);
-		
+		  
 		// TODO this is fucking thread 
 		 
 		// load thread
@@ -101,14 +101,17 @@ public class MainActivity extends Activity {
 			public void run() {
 				// load content				
 				loadContent();
-				progress.dismiss();
 			} 
 		}).start();
 		 
 		ListView listItem = (ListView) findViewById(R.id.listItem);
-		while (data_size<=0) {			
-			LazyAdapter adapter = new LazyAdapter(this, MyArrList);
-			listItem.setAdapter(adapter);		  
+		while (data_size<=0) {		
+			Log.d("JSON",String.valueOf(data_size));
+			if (data_size>0) {
+				LazyAdapter adapter = new LazyAdapter(this, MyArrList);
+				listItem.setAdapter(adapter);
+				progress.dismiss();
+			} 			
 		}
 		
 		// OnClick Item
