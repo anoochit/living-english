@@ -6,6 +6,7 @@ import java.util.HashMap;
 import net.redlinesoft.app.livingenglish.R;
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,15 @@ public class LazyAdapter extends BaseAdapter {
         inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         imageLoader=new ImageLoader(activity.getApplicationContext());
     }
+
+	public LazyAdapter(AsyncTask<Integer, Integer, Boolean> asyncTask,
+			ArrayList<HashMap<String, String>> myArrList) {
+		// TODO Auto-generated constructor stub
+		 
+	        data=myArrList;
+	        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	        imageLoader=new ImageLoader(activity.getApplicationContext());
+	}
 
 	@Override
 	public int getCount() {
