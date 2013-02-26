@@ -9,4 +9,5 @@
     <string name="text_share_body">Living English from https://play.google.com/store/apps/details?id=</string>
     <string name="menu_refresh">Refresh</string>
 
+    <color name="gray">#333333</color>
 </resources>

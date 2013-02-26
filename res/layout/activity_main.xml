@@ -4,16 +4,26 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical" >
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+     <ListView
+        android:id="@+id/listItem"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="50dp" >
 
-        <ListView
-            android:id="@+id/listItem"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-        </ListView>
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false" 
+        android:background="@color/gray"
+        android:gravity="bottom|center"   >
+
     </LinearLayout>
+
 
 </RelativeLayout>
